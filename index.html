@@ -4,7 +4,47 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DETRAN - Carteira de Motorista</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+
+$("consultaForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const busca=$("consultaBusca").value.trim();
+ if(!busca)return;
+ $("consultaBtn").disabled=true;$("consultaBtn").textContent="CONSULTANDO...";
+ hide($("consultaMsg"));$("consultaResult").innerHTML="";
+ try{
+  const {data:cpfData,error:cpfError}=await getDb().from("cnh").select("*").eq("cpf",busca).limit(1);
+  if(cpfError)throw cpfError;
+  let c=(cpfData||[])[0];
+  if(!c){
+   const {data:numData,error:numError}=await getDb().from("cnh").select("*").eq("numero_cnh",busca).limit(1);
+   if(numError)throw numError;
+   c=(numData||[])[0];
+  }
+  if(!c){
+   message($("consultaMsg"),"Nenhuma CNH encontrada para essa consulta.","err");
+  }else{
+   $("consultaResult").innerHTML=`<div class="consulta-card"><div class="consulta-grid">
+    <div>${c.foto_url?`<img src="${esc(c.foto_url)}" onerror="this.style.display='none'">`:""}</div>
+    <div class="consulta-info">
+     <div><small>NOME COMPLETO</small>${esc(c.nome_completo)}</div>
+     <div><small>CPF</small>${esc(c.cpf)}</div>
+     <div><small>RG</small>${esc(c.rg)}</div>
+     <div><small>CATEGORIA</small>${esc(c.categoria)}</div>
+     <div><small>STATUS</small><span class="badge ${esc(c.status)}">${esc(c.status||"—").toUpperCase()}</span></div>
+     <div><small>NÚMERO DA CNH</small>${esc(c.numero_cnh||"Não emitida")}</div>
+     <div><small>DATA DE EMISSÃO</small>${date(c.data_emissao)}</div>
+     <div><small>DATA DE VALIDADE</small>${date(c.data_validade)}</div>
+     <div><small>MOTIVO</small>${esc(c.motivo||"—")}</div>
+    </div>
+   </div></div>`;
+   message($("consultaMsg"),"CNH encontrada.","ok");
+  }
+ }catch(err){message($("consultaMsg"),"Erro na consulta: "+(err.message||"verifique o Supabase."),"err")}
+ $("consultaBtn").disabled=false;$("consultaBtn").textContent="CONSULTAR CNH";
+});
+
+</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#050b12;--card:#0b1722;--line:#234156;--text:#edf7ff;--muted:#8298a9;--blue:#168cff;--green:#42dda0;--red:#ff6e7c;--yellow:#ffd25c}
@@ -32,6 +72,7 @@ input:focus,select:focus{border-color:#29aaff;box-shadow:0 0 0 4px #168cff18}
 .table{overflow:auto;border:1px solid var(--line);border-radius:15px}table{width:100%;border-collapse:collapse;min-width:820px}th,td{padding:12px;border-bottom:1px solid #1b2f3e;text-align:left;font-size:11px}th{font-size:9px;color:#71899b}.actions{display:flex;gap:5px;flex-wrap:wrap}.actions button{padding:7px 9px;border-radius:8px;background:#0b1b27;color:#fff;border:1px solid #29465b;font-size:9px;font-weight:900}.actions .g{color:#60e4a9;border-color:#1b7052}.actions .r{color:#ff8995;border-color:#71313d}
 .detail{display:grid;grid-template-columns:1fr 1fr;gap:9px}.detail div{padding:11px;background:#071019;border-radius:10px}.detail small{display:block;color:#71899b;font-size:9px;margin-bottom:4px}.detail img{width:120px;height:150px;object-fit:cover;border-radius:12px}.modal-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:16px}
 @media(max-width:720px){.grid,.info,.detail{grid-template-columns:1fr}.full{grid-column:auto}.stats{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.top .btn{font-size:11px;padding:11px 10px}.brand h1{font-size:19px}.brand small{font-size:11px}}
+.consulta{margin-top:18px}.consulta h3{font-size:19px;margin-bottom:6px}.consulta p{color:var(--muted);margin-bottom:15px}.consulta-result{margin-top:15px}.consulta-card{border:1px solid var(--line);border-radius:17px;background:#071019;padding:16px}.consulta-grid{display:grid;grid-template-columns:120px 1fr;gap:16px}.consulta-grid img{width:120px;height:150px;object-fit:cover;border-radius:12px;border:1px solid #29465b}.consulta-info{display:grid;grid-template-columns:1fr 1fr;gap:9px}.consulta-info div{background:#0b1722;padding:10px;border-radius:10px}.consulta-info small{display:block;color:#71899b;font-size:9px;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -59,6 +100,19 @@ input:focus,select:focus{border-color:#29aaff;box-shadow:0 0 0 4px #168cff18}
 <div id="myCnh"></div>
 </section>
 </div>
+
+<section class="card consulta">
+ <h3>CONSULTA DE CNH</h3>
+ <p>Consulte uma carteira cadastrada pelo CPF ou número da CNH.</p>
+ <form id="consultaForm">
+  <div class="grid">
+   <div class="full"><label>CPF OU NÚMERO DA CNH</label><input id="consultaBusca" required placeholder="Digite o CPF ou número da CNH"></div>
+   <div class="full"><button id="consultaBtn" class="btn" style="width:100%" type="submit">CONSULTAR CNH</button></div>
+  </div>
+ </form>
+ <div id="consultaMsg" class="msg" style="display:none"></div>
+ <div id="consultaResult" class="consulta-result"></div>
+</section>
 
 <div id="loginOverlay" class="overlay">
 <div class="modal small">
