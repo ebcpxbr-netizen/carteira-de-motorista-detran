@@ -35,18 +35,15 @@ input:focus,select:focus{border-color:#29aaff;box-shadow:0 0 0 4px #168cff18}
 </style>
 </head>
 <body>
-
 <div class="container" id="main">
 <header class="top">
  <div class="brand"><div class="logo">D</div><div><h1>DETRAN</h1><small>Carteira de Motorista</small></div></div>
  <button id="openPanel" class="btn dark" type="button">PAINEL DO DETRAN</button>
 </header>
-
 <section class="card hero">
  <h2>Carteira de Motorista</h2>
  <p>Preencha seus dados e envie a solicitação para análise.</p>
 </section>
-
 <section class="card">
 <form id="cnhForm">
 <div class="grid">
@@ -104,23 +101,16 @@ input:focus,select:focus{border-color:#29aaff;box-shadow:0 0 0 4px #168cff18}
 </div>
 
 <script>
-/* ============================================================
-   CONFIGURAÇÃO
-   ============================================================ */
-const SUPABASE_URL="COLE_AQUI_A_URL_DO_SEU_SUPABASE";
-const SUPABASE_ANON_KEY="COLE_AQUI_A_CHAVE_ANON_DO_SEU_SUPABASE";
+const SUPABASE_URL="https://fynojwuejxcelrezmfnc.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_G_FjWjHVkg73T55pCt-x2g_nkaomPVz";
 const ADMIN_USER="DETRAN-2026";
 const ADMIN_PASS="DETRAN-2026";
 
 let db=null,rows=[],filter="todos",current=null;
 
-/* O painel NÃO depende do Supabase para abrir.
-   Isso corrige o problema em que o botão não fazia nada
-   quando o carregamento do Supabase/CDN falhava. */
 function getDb(){
  if(db)return db;
  if(!window.supabase)throw new Error("Biblioteca do Supabase não carregou.");
- if(SUPABASE_URL.startsWith("COLE_AQUI"))throw new Error("Configure a URL e a chave ANON do Supabase.");
  db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
  return db;
 }
