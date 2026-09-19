@@ -3,294 +3,341 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Carteira de Motorista — DETRAN</title>
+<title>DETRAN — Carteira de Motorista</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
- --bg:#050b12;--card:#0b1722;--line:#21394c;
- --text:#eef7ff;--muted:#8299aa;--blue:#168cff;
-}
-body{
- min-height:100vh;padding:28px 16px;color:var(--text);
- font-family:Inter,Arial,sans-serif;
- background:
- radial-gradient(circle at 8% 8%,#123e61 0,transparent 30%),
- radial-gradient(circle at 92% 92%,#082d49 0,transparent 30%),var(--bg);
-}
-.container{max-width:1080px;margin:auto}
-.header{display:flex;align-items:center;gap:14px;margin-bottom:22px}
-.logo{
- width:56px;height:56px;border-radius:17px;display:grid;place-items:center;
- background:linear-gradient(135deg,#28aaff,#1769ff);
- font-size:25px;font-weight:950;box-shadow:0 12px 35px #168cff55
-}
-.brand h1{font-size:23px;letter-spacing:.4px}
-.brand p{font-size:12px;color:var(--muted);margin-top:3px}
-.card{
- border:1px solid var(--line);border-radius:25px;padding:28px;
- background:#0b1722ee;box-shadow:0 25px 80px #0009;
- backdrop-filter:blur(16px)
-}
-.hero{margin-bottom:18px}
-.hero h2{font-size:30px}
-.hero p{margin-top:7px;color:var(--muted)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.full{grid-column:1/-1}
-label{display:block;margin-bottom:7px;color:#b8cbd8;font-size:12px;font-weight:850}
-input,select{
- width:100%;padding:14px 15px;border:1px solid #294457;border-radius:13px;
- background:#061019;color:#fff;outline:none;font-size:14px
-}
-input:focus,select:focus{border-color:#29aaff;box-shadow:0 0 0 4px #168cff18}
-.hint{display:block;color:#70889a;font-size:11px;margin-top:6px}
-.preview{
- display:none;width:105px;height:135px;object-fit:cover;margin-top:9px;
- border:1px solid #294457;border-radius:14px;background:#061019
-}
-.btn{
- width:100%;padding:15px;border:0;border-radius:14px;cursor:pointer;
- color:#fff;font-weight:950;background:linear-gradient(135deg,#159fff,#216cff);
- box-shadow:0 12px 30px #167cff30
-}
-.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.status{
- display:none;margin-top:18px;padding:17px;border:1px solid var(--line);
- border-radius:15px;background:#071019
-}
-.status.show{display:block}
-.status b{display:block;margin-bottom:5px}
-.pending{color:#ffd05b}.ok{color:#55e6a5}.bad{color:#ff7777}
-.cnh-card{
- display:none;margin-top:22px;border:1px solid #31506a;border-radius:20px;
- padding:22px;background:linear-gradient(145deg,#102131,#071019)
-}
-.cnh-card.show{display:block}
-.cnh-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-.cnh-top h3{font-size:19px}
-.badge{padding:7px 11px;border-radius:999px;font-size:10px;font-weight:900}
-.badge.ativa{background:#104936;color:#60e3a8}
-.badge.suspensa{background:#58320e;color:#ffb461}
-.badge.cancelada,.badge.recusada{background:#541f27;color:#ff8a96}
-.badge.pendente{background:#5b4314;color:#ffd66a}
-.cnh-body{display:grid;grid-template-columns:120px 1fr;gap:18px}
-.cnh-photo{width:120px;height:150px;object-fit:cover;border-radius:13px;border:1px solid #294457}
-.info{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.info div{padding:11px;border-radius:10px;background:#071019}
-.info small{display:block;color:#70889a;font-size:9px;margin-bottom:3px}
-@media(max-width:700px){
- .grid,.info{grid-template-columns:1fr}
- .full{grid-column:auto}.cnh-body{grid-template-columns:1fr}
-}
+:root{--bg:#050a10;--card:#0b1621;--line:#20384c;--text:#eef7ff;--muted:#7f95a6;--blue:#168cff;--green:#45dda0;--red:#ff6d7d;--yellow:#ffd05c}
+body{min-height:100vh;color:var(--text);font-family:Inter,Arial,sans-serif;background:radial-gradient(circle at 10% 5%,#123d5d 0,transparent 30%),radial-gradient(circle at 90% 95%,#092c45 0,transparent 32%),var(--bg)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.container{max-width:1180px;margin:auto;padding:22px 16px 45px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;font-size:24px;font-weight:1000;background:linear-gradient(135deg,#25a9ff,#1765ff);box-shadow:0 12px 35px #168cff55}
+.brand h1{font-size:22px}.brand small{color:var(--muted)}
+.card{border:1px solid var(--line);border-radius:23px;background:#0b1621ee;box-shadow:0 25px 75px #0009;backdrop-filter:blur(16px);padding:25px}
+.hero{margin-bottom:18px}.hero h2{font-size:28px}.hero p{color:var(--muted);margin-top:7px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}.full{grid-column:1/-1}
+label{display:block;font-size:11px;font-weight:900;color:#b9cbd7;margin:0 0 7px}
+input,select{width:100%;padding:14px;border:1px solid #29465b;border-radius:13px;background:#061019;color:#fff;outline:0}
+input:focus,select:focus{border-color:#28aaff;box-shadow:0 0 0 4px #168cff18}
+.btn{border:0;border-radius:13px;padding:14px 17px;font-weight:950;color:#fff;background:linear-gradient(135deg,#159fff,#216cff);box-shadow:0 10px 25px #167cff25}
+.btn.fullbtn{width:100%}.btn.danger{background:linear-gradient(135deg,#e84b5e,#a91f39)}.btn.green{background:linear-gradient(135deg,#16c987,#128c68)}.btn.dark{background:#101f2b;border:1px solid #2a4659;box-shadow:none}
+.auth{max-width:470px;margin:65px auto}.auth h2{font-size:28px;margin-bottom:7px}.auth p{color:var(--muted);margin-bottom:22px}.auth .grid{grid-template-columns:1fr}
+.auth-switch{display:flex;gap:8px;margin-bottom:18px}.auth-switch button{flex:1}
+.note{font-size:11px;color:var(--muted);line-height:1.5;margin-top:12px}
+.status{margin-top:16px;padding:14px;border-radius:13px;background:#071019;border:1px solid var(--line)}
+.status.ok{border-color:#1b6b50}.status.bad{border-color:#7a2d39}.status.warn{border-color:#755b1e}
+.dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat{padding:18px;border:1px solid var(--line);border-radius:17px;background:#0a141e}
+.stat small{color:var(--muted);font-size:10px;font-weight:900}.stat strong{display:block;font-size:28px;margin-top:5px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}.filters button{padding:9px 12px;border-radius:10px;border:1px solid #29465b;background:#08121b;color:#bcd0dc;font-weight:800}.filters button.active{background:#126fba;color:#fff;border-color:#168cff}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:16px}
+table{width:100%;border-collapse:collapse;min-width:800px}th,td{padding:13px;border-bottom:1px solid #1a2d3d;text-align:left;font-size:12px}th{color:#7891a3;font-size:10px}td{color:#dceaf2}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:8px 10px;border-radius:9px;border:1px solid #29465b;background:#0b1a26;color:#fff;font-size:10px;font-weight:900}.actions .approve{border-color:#167b5a;color:#62e4ad}.actions .refuse,.actions .suspend{border-color:#7c303c;color:#ff8794}
+.badge{display:inline-block;padding:6px 9px;border-radius:999px;font-size:9px;font-weight:950}.pendente{background:#594411;color:#ffd66a}.ativa{background:#0f4936;color:#5de4a7}.recusada,.cancelada{background:#501f29;color:#ff8492}.suspensa{background:#57320e;color:#ffb15f}
+.modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal.show{display:flex}.modalbox{width:min(720px,100%);max-height:90vh;overflow:auto;border:1px solid var(--line);border-radius:22px;background:#0a151f;padding:23px;box-shadow:0 30px 100px #000}
+.modalbox h3{margin-bottom:16px}.detail{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detail div{background:#071019;border-radius:10px;padding:11px}.detail small{display:block;color:#71899b;font-size:9px;margin-bottom:4px}.detail img{width:120px;height:150px;object-fit:cover;border-radius:12px}.modal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+@media(max-width:750px){.grid,.stats{grid-template-columns:1fr}.full{grid-column:auto}.stats{grid-template-columns:1fr 1fr}.dashboard-head{align-items:flex-start;flex-direction:column}.detail{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
-<div class="container">
 
-<header class="header">
- <div class="logo">D</div>
- <div class="brand">
-  <h1>DETRAN</h1>
-  <p>Carteira de Motorista</p>
- </div>
-</header>
+<div id="authView" class="container">
+ <div class="card auth">
+  <div class="brand" style="margin-bottom:22px">
+   <div class="logo">D</div><div><h1>DETRAN</h1><small>Sistema de Carteira de Motorista</small></div>
+  </div>
+  <h2>Acesso ao sistema</h2>
+  <p>Entre como cidadão ou acesse o painel administrativo.</p>
 
-<section class="card hero">
- <h2>Carteira de Motorista</h2>
- <p>Preencha seus dados e envie a solicitação para análise.</p>
-</section>
+  <div class="auth-switch">
+   <button id="citizenMode" class="btn">CIDADÃO</button>
+   <button id="adminMode" class="btn dark">DETRAN</button>
+  </div>
 
-<section class="card">
- <form id="cnhForm">
-  <div class="grid">
-
-   <div class="full">
+  <form id="loginForm">
+   <div id="nameBox" style="margin-bottom:13px">
     <label>NOME COMPLETO</label>
-    <input id="nome" maxlength="120" required placeholder="Digite seu nome completo">
+    <input id="loginName" placeholder="Seu nome completo">
    </div>
-
-   <div>
-    <label>CPF</label>
-    <input id="cpf" maxlength="14" required placeholder="000.000.000-00">
+   <div style="margin-bottom:13px">
+    <label>USUÁRIO</label>
+    <input id="loginUser" required placeholder="Digite seu usuário">
    </div>
-
-   <div>
-    <label>RG</label>
-    <input id="rg" maxlength="30" required placeholder="Digite seu RG">
+   <div style="margin-bottom:13px">
+    <label>SENHA</label>
+    <input id="loginPass" type="password" required placeholder="Digite sua senha">
    </div>
+   <button class="btn fullbtn" id="loginBtn">ENTRAR</button>
+  </form>
+  <button id="signupBtn" class="btn dark fullbtn" style="width:100%;margin-top:9px">CRIAR CONTA DE CIDADÃO</button>
+  <div id="authMsg" class="status hidden"></div>
+  <p class="note">Acesso administrativo fixo: usuário <b>DETRAN-2026</b> e senha <b>DETRAN-2026</b>.</p>
+ </div>
+</div>
 
-   <div>
-    <label>CLASSE / CATEGORIA</label>
-    <select id="categoria" required>
-     <option value="">Selecione uma categoria</option>
-     <option value="ACC">ACC</option>
-     <option value="A">A</option>
-     <option value="B">B</option>
-     <option value="C">C</option>
-     <option value="D">D</option>
-     <option value="E">E</option>
-     <option value="AB">AB</option>
-     <option value="AC">AC</option>
-     <option value="AD">AD</option>
-     <option value="AE">AE</option>
-    </select>
+<div id="citizenView" class="hidden">
+<div class="container">
+ <header class="top">
+  <div class="brand"><div class="logo">D</div><div><h1>DETRAN</h1><small>Área do Cidadão</small></div></div>
+  <button id="logoutCitizen" class="btn dark">SAIR</button>
+ </header>
+
+ <section class="card hero"><h2>Solicitar Carteira de Motorista</h2><p>Preencha os dados abaixo e envie sua solicitação para análise.</p></section>
+
+ <section class="card">
+  <form id="cnhForm"><div class="grid">
+   <div class="full"><label>NOME COMPLETO</label><input id="nome" maxlength="120" required placeholder="Digite seu nome completo"></div>
+   <div><label>CPF</label><input id="cpf" maxlength="14" required placeholder="000.000.000-00"></div>
+   <div><label>RG</label><input id="rg" maxlength="30" required placeholder="Digite seu RG"></div>
+   <div><label>CLASSE / CATEGORIA</label>
+    <select id="categoria" required><option value="">Selecione uma categoria</option><option>ACC</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>AB</option><option>AC</option><option>AD</option><option>AE</option></select>
    </div>
+   <div><label>URL DA FOTO</label><input id="foto_url" type="url" required placeholder="https://site.com/foto.png"><img id="preview" style="display:none;width:100px;height:130px;object-fit:cover;border-radius:12px;margin-top:8px;border:1px solid #29465b"></div>
+   <div class="full"><button class="btn fullbtn" id="submitBtn">ENVIAR PARA ANÁLISE</button></div>
+  </div></form>
+  <div id="citizenMsg" class="status hidden"></div>
+  <div id="myCnh"></div>
+ </section>
+</div>
+</div>
 
-   <div>
-    <label>URL DA FOTO</label>
-    <input id="foto_url" type="url" required placeholder="https://site.com/foto.png">
-    <span class="hint">Cole somente a URL da imagem.</span>
-    <img id="preview" class="preview" alt="Pré-visualização">
-   </div>
+<div id="adminView" class="hidden">
+<div class="container">
+ <header class="top">
+  <div class="brand"><div class="logo">D</div><div><h1>DETRAN</h1><small>Painel Administrativo</small></div></div>
+  <button id="logoutAdmin" class="btn dark">SAIR</button>
+ </header>
 
-   <div class="full">
-    <button class="btn" id="submitBtn" type="submit">ENVIAR PARA ANÁLISE</button>
-   </div>
+ <div class="dashboard-head"><div><h2>Painel do DETRAN</h2><p style="color:var(--muted);margin-top:4px">Gerenciamento de solicitações de CNH</p></div></div>
 
-  </div>
- </form>
-
- <div id="status" class="status">
-  <b id="statusTitle"></b>
-  <span id="statusText"></span>
+ <div class="stats">
+  <div class="stat"><small>TODAS</small><strong id="sAll">0</strong></div>
+  <div class="stat"><small>PENDENTES</small><strong id="sPending">0</strong></div>
+  <div class="stat"><small>ATIVAS</small><strong id="sActive">0</strong></div>
+  <div class="stat"><small>SUSPENSAS</small><strong id="sSuspended">0</strong></div>
  </div>
 
- <div id="minhaCnh" class="cnh-card">
-  <div class="cnh-top">
-   <h3>Minha Carteira</h3>
-   <span id="badge" class="badge"></span>
+ <section class="card">
+  <div class="filters">
+   <button class="active" data-filter="todos">TODAS</button>
+   <button data-filter="pendente">PENDENTES</button>
+   <button data-filter="ativa">ATIVAS</button>
+   <button data-filter="recusada">RECUSADAS</button>
+   <button data-filter="suspensa">SUSPENSAS</button>
+   <button data-filter="cancelada">CANCELADAS</button>
   </div>
-  <div class="cnh-body">
-   <img id="cnhPhoto" class="cnh-photo" alt="Foto">
-   <div class="info">
-    <div><small>NOME</small><span id="cnhNome"></span></div>
-    <div><small>CPF</small><span id="cnhCpf"></span></div>
-    <div><small>RG</small><span id="cnhRg"></span></div>
-    <div><small>CATEGORIA</small><span id="cnhCategoria"></span></div>
-    <div><small>NÚMERO DA CNH</small><span id="cnhNumero"></span></div>
-    <div><small>EMISSÃO</small><span id="cnhEmissao"></span></div>
-    <div><small>VALIDADE</small><span id="cnhValidade"></span></div>
-    <div><small>MOTIVO</small><span id="cnhMotivo"></span></div>
-   </div>
+  <div class="tablewrap">
+   <table><thead><tr><th>NOME</th><th>CPF</th><th>CATEGORIA</th><th>STATUS</th><th>NÚMERO</th><th>AÇÕES</th></tr></thead><tbody id="adminTable"></tbody></table>
   </div>
+ </section>
+</div>
+</div>
+
+<div id="modal" class="modal">
+ <div class="modalbox">
+  <h3 id="modalTitle">Detalhes da CNH</h3>
+  <div id="modalContent"></div>
+  <div class="modal-actions" id="modalActions"></div>
+  <button class="btn dark" style="margin-top:9px" onclick="closeModal()">FECHAR</button>
  </div>
-</section>
 </div>
 
 <script>
 const SUPABASE_URL="COLE_AQUI_A_URL_DO_SEU_SUPABASE";
 const SUPABASE_ANON_KEY="COLE_AQUI_A_CHAVE_ANON_DO_SEU_SUPABASE";
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+const ADMIN_USER="DETRAN-2026";
+const ADMIN_PASS="DETRAN-2026";
+let adminMode=false,adminRows=[],currentFilter="todos",currentCnh=null;
+
 const $=id=>document.getElementById(id);
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+const fmt=d=>d?new Date(d+"T00:00:00").toLocaleDateString("pt-BR"):"—";
 
-function showStatus(title,text,cls){
- $("status").className="status show";
- $("statusTitle").className=cls;
- $("statusTitle").textContent=title;
- $("statusText").textContent=text;
+function authMsg(text,bad=false){
+ $("authMsg").className="status "+(bad?"bad":"ok");
+ $("authMsg").textContent=text;
 }
-
-function fmt(date){
- if(!date)return "—";
- return new Date(date+"T00:00:00").toLocaleDateString("pt-BR");
+function citizenMsg(text,bad=false){
+ $("citizenMsg").className="status "+(bad?"bad":"ok");
+ $("citizenMsg").textContent=text;
 }
-
-function showCnh(c){
- $("minhaCnh").className="cnh-card show";
- $("badge").className="badge "+c.status;
- $("badge").textContent=c.status.toUpperCase();
- $("cnhPhoto").src=c.foto_url;
- $("cnhNome").textContent=c.nome_completo;
- $("cnhCpf").textContent=c.cpf;
- $("cnhRg").textContent=c.rg;
- $("cnhCategoria").textContent=c.categoria;
- $("cnhNumero").textContent=c.numero_cnh||"Ainda não emitida";
- $("cnhEmissao").textContent=fmt(c.data_emissao);
- $("cnhValidade").textContent=fmt(c.data_validade);
- $("cnhMotivo").textContent=c.motivo||"—";
+function show(view){
+ ["authView","citizenView","adminView"].forEach(x=>$(x).classList.add("hidden"));
+ $(view).classList.remove("hidden");
 }
+function logout(){db.auth.signOut();show("authView")}
 
-async function carregarMinhaCnh(){
- const {data:{user}}=await db.auth.getUser();
- if(!user)return;
+$("citizenMode").onclick=()=>{
+ adminMode=false;$("citizenMode").className="btn";$("adminMode").className="btn dark";
+ $("nameBox").style.display="block";$("signupBtn").style.display="block";
+};
+$("adminMode").onclick=()=>{
+ adminMode=true;$("adminMode").className="btn";$("citizenMode").className="btn dark";
+ $("nameBox").style.display="none";$("signupBtn").style.display="none";
+ $("loginUser").value=ADMIN_USER;$("loginPass").value=ADMIN_PASS;
+};
 
- const {data}=await db.from("cnh")
-  .select("*")
-  .eq("user_id",user.id)
-  .order("created_at",{ascending:false})
-  .limit(1)
-  .maybeSingle();
+$("signupBtn").onclick=async()=>{
+ const nome=$("loginName").value.trim();
+ if(!nome)return authMsg("Digite seu nome para criar a conta.",true);
+ const {error}=await db.auth.signUp({
+  email:("cidadao."+Date.now()+"@detran.local").toLowerCase(),
+  password:ADMIN_PASS,
+  options:{data:{nome:nome}}
+ });
+ if(error)authMsg(error.message,true);
+ else authMsg("Conta criada. Entre como cidadão.",false);
+};
 
- if(data)showCnh(data);
-}
+$("loginForm").onsubmit=async e=>{
+ e.preventDefault();
+ $("loginBtn").disabled=true;
+ try{
+  if(adminMode){
+   if($("loginUser").value!==ADMIN_USER||$("loginPass").value!==ADMIN_PASS)
+    throw new Error("Usuário ou senha do DETRAN inválidos.");
+   show("adminView");await loadAdmin();
+  }else{
+   const email=("cidadao."+$("loginUser").value.trim()+"@detran.local").toLowerCase();
+   const {error}=await db.auth.signInWithPassword({email,password:ADMIN_PASS});
+   if(error)throw error;
+   show("citizenView");await loadCitizen();
+  }
+ }catch(err){authMsg(err.message||"Erro ao entrar.",true)}
+ $("loginBtn").disabled=false;
+};
 
-$("foto_url").addEventListener("input",()=>{
- const url=$("foto_url").value.trim();
- if(!url){$("preview").style.display="none";return}
- $("preview").src=url;
- $("preview").style.display="block";
-});
+$("logoutCitizen").onclick=logout;
+$("logoutAdmin").onclick=logout;
+
+$("foto_url").oninput=()=>{
+ const u=$("foto_url").value.trim();
+ if(!u){$("preview").style.display="none";return}
+ $("preview").src=u;$("preview").style.display="block";
+};
 $("preview").onerror=()=>{$("preview").style.display="none"};
 
-$("cnhForm").addEventListener("submit",async e=>{
- e.preventDefault();
- $("submitBtn").disabled=true;
- $("submitBtn").textContent="ENVIANDO...";
+async function loadCitizen(){
+ const {data:{user}}=await db.auth.getUser();
+ if(!user)return;
+ const {data,error}=await db.from("cnh").select("*").eq("user_id",user.id).order("created_at",{ascending:false}).limit(1).maybeSingle();
+ if(error){citizenMsg(error.message,true);return}
+ if(data)renderMyCnh(data);
+}
 
+function renderMyCnh(c){
+ $("myCnh").innerHTML=`<div class="card" style="margin-top:18px">
+ <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:15px"><h3>Minha CNH</h3><span class="badge ${esc(c.status)}">${esc(c.status).toUpperCase()}</span></div>
+ <div class="detail">
+  <div><small>NOME</small>${esc(c.nome_completo)}</div><div><small>CPF</small>${esc(c.cpf)}</div>
+  <div><small>RG</small>${esc(c.rg)}</div><div><small>CATEGORIA</small>${esc(c.categoria)}</div>
+  <div><small>NÚMERO</small>${esc(c.numero_cnh||"Aguardando emissão")}</div><div><small>EMISSÃO</small>${fmt(c.data_emissao)}</div>
+  <div><small>VALIDADE</small>${fmt(c.data_validade)}</div><div><small>MOTIVO</small>${esc(c.motivo||"—")}</div>
+ </div></div>`;
+}
+
+$("cnhForm").onsubmit=async e=>{
+ e.preventDefault();
+ $("submitBtn").disabled=true;$("submitBtn").textContent="ENVIANDO...";
  try{
   const {data:{user}}=await db.auth.getUser();
-  if(!user)throw new Error("Faça login antes de enviar a solicitação.");
-
-  const {data:existente}=await db.from("cnh")
-   .select("id,status")
-   .eq("user_id",user.id)
-   .in("status",["pendente","ativa","suspensa"])
-   .limit(1)
-   .maybeSingle();
-
-  if(existente)throw new Error("Você já possui uma solicitação ou CNH ativa.");
-
+  if(!user)throw new Error("Faça login novamente.");
+  const {data:existing}=await db.from("cnh").select("id,status").eq("user_id",user.id).in("status",["pendente","ativa","suspensa"]).limit(1).maybeSingle();
+  if(existing)throw new Error("Já existe uma solicitação/CNH ativa para esta conta.");
   const {error}=await db.from("cnh").insert({
-   user_id:user.id,
-   nome_completo:$("nome").value.trim(),
-   cpf:$("cpf").value.trim(),
-   rg:$("rg").value.trim(),
-   categoria:$("categoria").value,
-   foto_url:$("foto_url").value.trim(),
-   status:"pendente"
+   user_id:user.id,nome_completo:$("nome").value.trim(),cpf:$("cpf").value.trim(),
+   rg:$("rg").value.trim(),categoria:$("categoria").value,foto_url:$("foto_url").value.trim(),status:"pendente"
   });
-
   if(error)throw error;
+  citizenMsg("Solicitação enviada ao painel do DETRAN para análise.");
+  $("cnhForm").reset();$("preview").style.display="none";await loadCitizen();
+ }catch(err){citizenMsg(err.message||"Erro ao enviar.",true)}
+ $("submitBtn").disabled=false;$("submitBtn").textContent="ENVIAR PARA ANÁLISE";
+};
 
-  showStatus(
-   "SOLICITAÇÃO ENVIADA",
-   "Sua Carteira de Motorista está pendente de análise pelo DETRAN.",
-   "pending"
-  );
+async function loadAdmin(){
+ const {data,error}=await db.from("cnh").select("*").order("created_at",{ascending:false});
+ if(error){alert(error.message);return}
+ adminRows=data||[];
+ $("sAll").textContent=adminRows.length;
+ $("sPending").textContent=adminRows.filter(x=>x.status==="pendente").length;
+ $("sActive").textContent=adminRows.filter(x=>x.status==="ativa").length;
+ $("sSuspended").textContent=adminRows.filter(x=>x.status==="suspensa").length;
+ renderAdmin();
+}
 
-  $("cnhForm").reset();
-  $("preview").style.display="none";
-  await carregarMinhaCnh();
+function renderAdmin(){
+ const rows=currentFilter==="todos"?adminRows:adminRows.filter(x=>x.status===currentFilter);
+ $("adminTable").innerHTML=rows.map(c=>`<tr>
+ <td>${esc(c.nome_completo)}</td><td>${esc(c.cpf)}</td><td>${esc(c.categoria)}</td>
+ <td><span class="badge ${esc(c.status)}">${esc(c.status).toUpperCase()}</span></td>
+ <td>${esc(c.numero_cnh||"—")}</td>
+ <td><div class="actions"><button onclick="openCnh('${esc(c.id)}')">VER</button>
+ ${c.status==="pendente"?`<button class="approve" onclick="approveCnh('${esc(c.id)}')">APROVAR</button><button class="refuse" onclick="refuseCnh('${esc(c.id)}')">RECUSAR</button>`:""}
+ ${c.status==="ativa"?`<button class="suspend" onclick="suspendCnh('${esc(c.id)}')">SUSPENDER</button><button onclick="cancelCnh('${esc(c.id)}')">CANCELAR</button>`:""}
+ ${c.status==="suspensa"?`<button class="approve" onclick="reactivateCnh('${esc(c.id)}')">REATIVAR</button><button onclick="cancelCnh('${esc(c.id)}')">CANCELAR</button>`:""}
+ </div></td></tr>`).join("")||`<tr><td colspan="6">Nenhuma solicitação encontrada.</td></tr>`;
+}
 
- }catch(err){
-  showStatus("ERRO",err.message||"Não foi possível enviar.","bad");
- }
-
- $("submitBtn").disabled=false;
- $("submitBtn").textContent="ENVIAR PARA ANÁLISE";
+document.querySelectorAll(".filters button").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll(".filters button").forEach(x=>x.classList.remove("active"));
+ b.classList.add("active");currentFilter=b.dataset.filter;renderAdmin();
 });
 
-(async()=>{
- const {data:{user}}=await db.auth.getUser();
- if(!user){
-  showStatus("LOGIN NECESSÁRIO","Faça login no sistema para solicitar sua CNH.","bad");
- }else{
-  await carregarMinhaCnh();
+function findCnh(id){return adminRows.find(x=>x.id===id)}
+function openCnh(id){
+ currentCnh=findCnh(id);if(!currentCnh)return;
+ const c=currentCnh;
+ $("modalContent").innerHTML=`<div class="detail">
+ <div><small>NOME COMPLETO</small>${esc(c.nome_completo)}</div><div><small>CPF</small>${esc(c.cpf)}</div>
+ <div><small>RG</small>${esc(c.rg)}</div><div><small>CATEGORIA</small>${esc(c.categoria)}</div>
+ <div><small>STATUS</small><span class="badge ${esc(c.status)}">${esc(c.status).toUpperCase()}</span></div>
+ <div><small>NÚMERO DA CNH</small>${esc(c.numero_cnh||"Não emitida")}</div>
+ <div><small>EMISSÃO</small>${fmt(c.data_emissao)}</div><div><small>VALIDADE</small>${fmt(c.data_validade)}</div>
+ <div><small>MOTIVO</small>${esc(c.motivo||"—")}</div>
+ <div><small>FOTO</small><img src="${esc(c.foto_url)}" onerror="this.style.display='none'"></div>
+ </div>`;
+ $("modalActions").innerHTML=`
+ ${c.status==="pendente"?`<button class="btn green" onclick="approveCnh('${esc(c.id)}')">APROVAR</button><button class="btn danger" onclick="refuseCnh('${esc(c.id)}')">RECUSAR</button>`:""}
+ ${c.status==="ativa"?`<button class="btn danger" onclick="suspendCnh('${esc(c.id)}')">SUSPENDER</button><button class="btn dark" onclick="cancelCnh('${esc(c.id)}')">CANCELAR</button>`:""}
+ ${c.status==="suspensa"?`<button class="btn green" onclick="reactivateCnh('${esc(c.id)}')">REATIVAR</button><button class="btn dark" onclick="cancelCnh('${esc(c.id)}')">CANCELAR</button>`:""}`;
+ $("modal").classList.add("show");
+}
+function closeModal(){$("modal").classList.remove("show")}
+
+async function updateCnh(id,status,motivo=""){
+ let numero=null,emissao=null,validade=null;
+ if(status==="ativa"){
+  numero="CNH-"+String(Math.floor(10000000000+Math.random()*89999999999));
+  emissao=new Date().toISOString().slice(0,10);
+  const d=new Date();d.setFullYear(d.getFullYear()+10);validade=d.toISOString().slice(0,10);
  }
-})();
+ const {data:{user}}=await db.auth.getUser();
+ const {error}=await db.from("cnh").update({
+  status,motivo:motivo||null,numero_cnh:numero,data_emissao:emissao,data_validade:validade,
+  analisado_por:user?.id||null,analisado_em:new Date().toISOString()
+ }).eq("id",id);
+ if(error){alert(error.message);return false}
+ await db.from("admin_logs").insert({admin_id:user?.id||null,cnh_id:id,acao:status,motivo:motivo||null});
+ await loadAdmin();closeModal();return true;
+}
+async function approveCnh(id){await updateCnh(id,"ativa")}
+async function refuseCnh(id){const m=prompt("Motivo da recusa:");if(m)await updateCnh(id,"recusada",m)}
+async function suspendCnh(id){const m=prompt("Motivo da suspensão:");if(m)await updateCnh(id,"suspensa",m)}
+async function cancelCnh(id){const m=prompt("Motivo do cancelamento:");if(m)await updateCnh(id,"cancelada",m)}
+async function reactivateCnh(id){await updateCnh(id,"ativa")}
+
+db.auth.onAuthStateChange(async(_event,session)=>{
+ if(session&&!adminMode){show("citizenView");await loadCitizen()}
+});
+
+show("authView");
 </script>
 </body>
 </html>
