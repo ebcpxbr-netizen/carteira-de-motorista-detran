@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Carteira de Motorista — DETRAN</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#18351f 0,#07120a 42%,#020503 100%);color:#f2f5ef;min-height:100vh}
+header{text-align:center;padding:28px 20px 18px;border-bottom:1px solid #ffffff1f;background:#00000047}.badge{display:inline-block;padding:7px 14px;border:1px solid #708c61;border-radius:999px;font-size:12px;letter-spacing:2px;color:#cbd8c4}h1{margin:13px 0 5px;font-size:30px}.subtitle,.notice{color:#aeb8aa}.container{width:min(1100px,92%);margin:30px auto}.card{background:#0a120cdd;border:1px solid #aec3a329;border-radius:20px;padding:25px;margin-bottom:22px;box-shadow:0 18px 50px #0000004d}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}label{display:block;color:#c8d1c4;font-size:13px;margin-bottom:7px}input,select{width:100%;padding:13px 14px;border-radius:11px;border:1px solid #3a4c3c;background:#0b130d;color:#fff;outline:none}button{border:0;border-radius:11px;padding:13px 18px;font-weight:bold;cursor:pointer;background:#a8bd98;color:#091008}.actions{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}.hidden{display:none!important}.error{color:#ff9b9b}.success{color:#bce5aa}#painel{display:none}table{width:100%;border-collapse:collapse;margin-top:18px}th,td{padding:11px 8px;border-bottom:1px solid #ffffff17;text-align:left;font-size:13px}th{color:#cbd6c6}.license{max-width:720px;margin:22px auto;padding:24px;border-radius:22px;background:linear-gradient(145deg,#16271a,#09120b);border:1px solid #6d8461;box-shadow:0 20px 55px #0006}.license-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff24;padding-bottom:15px}.license-title{font-size:22px;font-weight:bold}.license-sub{font-size:12px;color:#aeb8aa;letter-spacing:2px}.license-body{display:grid;grid-template-columns:155px 1fr;gap:22px;margin-top:20px}.photo{width:155px;height:190px;border-radius:12px;border:1px solid #566b50;background:#08100a;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#788575;font-size:12px;text-align:center}.photo img{width:100%;height:100%;object-fit:cover}.data div{padding:10px 0;border-bottom:1px solid #ffffff14}.data span{display:block;color:#94a18f;font-size:11px;text-transform:uppercase}.data b{font-size:15px}.status{display:inline-block;margin-top:16px;padding:8px 13px;border-radius:999px;font-weight:bold;background:#365b39;color:#d9efd4}.status.SUSPENSA,.status.RECUSADA{background:#6b3030;color:#ffd2d2}.status.PENDENTE{background:#685a2e;color:#fff0ad}footer{text-align:center;color:#778275;padding:25px;font-size:12px}
+</style>
+</head>
+<body>
+<header><span class="badge">SISTEMA INSTITUCIONAL • DETRAN</span><h1>CARTEIRA DE MOTORISTA</h1><p class="subtitle">Solicitação, consulta e gestão de carteiras — ambiente demonstrativo</p></header>
+<main class="container">
+<section class="card"><h2>🔎 Consultar Carteira</h2><p class="notice">Pesquise pelo nome completo, número da CNH ou RF.</p><div class="grid">
+<div><label>Nome Completo</label><input id="buscaNome" placeholder="Nome completo"></div><div><label>CNH</label><input id="buscaCNH" placeholder="Número da CNH"></div><div><label>RF</label><input id="buscaRF" placeholder="RF"></div></div>
+<div class="actions"><button onclick="consultar()">Pesquisar</button><button onclick="limparBusca()">Limpar</button></div><div id="resultado" class="hidden"></div></section>
+
+<section class="card"><h2>🪪 Solicitar Carteira de Motorista</h2><p class="notice">Informe a URL pública da foto do personagem. A solicitação ficará pendente para análise do DETRAN.</p><div class="grid">
+<div><label>Nome Completo</label><input id="nome" placeholder="Nome completo"></div><div><label>CNH</label><input id="cnh" placeholder="Número da CNH"></div><div><label>RF</label><input id="rf" placeholder="RF"></div>
+<div><label>Categoria</label><select id="categoria"><option value="">Selecione</option><option>ACC</option><option>A</option><option>B</option><option>AB</option><option>C</option><option>D</option><option>E</option><option>AC</option><option>AD</option><option>AE</option></select></div>
+<div><label>URL da foto do personagem</label><input id="foto" type="url" placeholder="https://..."></div></div><div class="actions"><button onclick="solicitar()">Solicitar Carteira</button></div><p id="solMsg"></p></section>
+
+<section class="card"><h2>🛂 Painel DETRAN</h2><p class="notice">Área administrativa para analisar solicitações e gerenciar carteiras.</p>
+<div id="login"><div class="grid"><div><label>Usuário</label><input id="user" placeholder="Usuário do DETRAN"></div><div><label>Senha</label><input id="pass" type="password" placeholder="Senha"></div></div><div class="actions"><button onclick="entrar()">Entrar no Painel</button></div><p id="loginMsg" class="error"></p></div>
+<div id="painel"><div class="actions"><button onclick="carregarPainel()">Atualizar</button><button onclick="sair()">Sair</button></div><p id="painelMsg"></p><div id="lista"></div></div></section>
+</main><footer>Sistema demonstrativo. Utilize somente dados fictícios e imagens de personagens.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://eglzoenpozaxfahqwltg.supabase.co";
+const SUPABASE_KEY="sb_publishable_aZaD94VTARYLAtXjBgQZ5Q_IXXyZElW";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const DETRAN_USER="DETRAN-2026",DETRAN_PASS="DETRAN-2026";
+function esc(x){return String(x??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function setmsg(id,t,c=""){const e=document.getElementById(id);e.className=c;e.textContent=t}
+async function solicitar(){
+const nome=document.getElementById("nome").value.trim(),cnh=document.getElementById("cnh").value.trim(),rf=document.getElementById("rf").value.trim(),categoria=document.getElementById("categoria").value,foto=document.getElementById("foto").value.trim();
+if(!nome||!cnh||!rf||!categoria||!foto){setmsg("solMsg","Preencha todos os campos.","error");return}
+try{new URL(foto)}catch(e){setmsg("solMsg","Informe uma URL válida para a foto.","error");return}
+const {data:dup,error:de}=await db.from("carteiras_motorista").select("id").or("cnh.eq."+cnh+",rf.eq."+rf).limit(1);
+if(de){setmsg("solMsg","Erro ao verificar: "+de.message,"error");return}if(dup?.length){setmsg("solMsg","Já existe uma solicitação com essa CNH ou RF.","error");return}
+const {error}=await db.from("carteiras_motorista").insert([{nome,cnh,rf,categoria,foto_url:foto,status:"PENDENTE"}]);
+if(error){setmsg("solMsg","Erro ao solicitar: "+error.message,"error");return}
+["nome","cnh","rf","foto"].forEach(id=>document.getElementById(id).value="");document.getElementById("categoria").value="";setmsg("solMsg","Solicitação enviada ao DETRAN.","success");
+}
+async function consultar(){
+const nome=document.getElementById("buscaNome").value.trim(),cnh=document.getElementById("buscaCNH").value.trim(),rf=document.getElementById("buscaRF").value.trim(),box=document.getElementById("resultado");
+if(!nome&&!cnh&&!rf){box.classList.remove("hidden");box.innerHTML='<p class="error">Informe Nome, CNH ou RF.</p>';return}
+let filtros=[];if(nome)filtros.push("nome.ilike.%"+nome+"%");if(cnh)filtros.push("cnh.eq."+cnh);if(rf)filtros.push("rf.eq."+rf);
+const {data,error}=await db.from("carteiras_motorista").select("*").or(filtros.join(",")).order("nome");box.classList.remove("hidden");
+if(error){box.innerHTML='<p class="error">Erro: '+esc(error.message)+'</p>';return}if(!data?.length){box.innerHTML="<p>Nenhuma carteira encontrada.</p>";return}box.innerHTML=data.map(cardHTML).join("");
+}
+function cardHTML(o){const st=String(o.status||"").toUpperCase();return `<div class="license"><div class="license-head"><div><div class="license-title">CARTEIRA DE MOTORISTA</div><div class="license-sub">DETRAN</div></div></div><div class="license-body"><div class="photo">${o.foto_url?`<img src="${esc(o.foto_url)}" alt="Foto do personagem" onerror="this.style.display='none';this.parentElement.textContent='Imagem indisponível'">`:"Sem foto"}</div><div class="data"><div><span>Nome Completo</span><b>${esc(o.nome)}</b></div><div><span>CNH</span><b>${esc(o.cnh)}</b></div><div><span>RF</span><b>${esc(o.rf)}</b></div><div><span>Categoria</span><b>${esc(o.categoria)}</b></div><div><span>Situação</span><b>${esc(st)}</b></div></div></div><span class="status ${st}">${esc(st)}</span></div>`}
+function limparBusca(){["buscaNome","buscaCNH","buscaRF"].forEach(id=>document.getElementById(id).value="");document.getElementById("resultado").classList.add("hidden");document.getElementById("resultado").innerHTML=""}
+function entrar(){if(document.getElementById("user").value.trim()===DETRAN_USER&&document.getElementById("pass").value===DETRAN_PASS){document.getElementById("login").classList.add("hidden");document.getElementById("painel").style.display="block";carregarPainel()}else setmsg("loginMsg","Usuário ou senha incorretos.","error")}
+function sair(){document.getElementById("painel").style.display="none";document.getElementById("login").classList.remove("hidden");document.getElementById("pass").value=""}
+async function carregarPainel(){
+const box=document.getElementById("lista");box.innerHTML="<p class='notice'>Carregando...</p>";const {data,error}=await db.from("carteiras_motorista").select("*").order("created_at",{ascending:false});
+if(error){box.innerHTML='<p class="error">Erro: '+esc(error.message)+'</p>';return}if(!data?.length){box.innerHTML="<p class='notice'>Nenhuma solicitação cadastrada.</p>";return}
+box.innerHTML=`<table><thead><tr><th>Foto</th><th>Nome</th><th>CNH</th><th>RF</th><th>Categoria</th><th>Status</th><th>Ações</th></tr></thead><tbody>${data.map(o=>`<tr><td><img src="${esc(o.foto_url)}" style="width:45px;height:55px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"></td><td>${esc(o.nome)}</td><td>${esc(o.cnh)}</td><td>${esc(o.rf)}</td><td>${esc(o.categoria)}</td><td>${esc(o.status)}</td><td><button onclick="alterar('${esc(o.id)}','APROVADA')">Aprovar</button> <button onclick="alterar('${esc(o.id)}','RECUSADA')">Recusar</button> <button onclick="alterar('${esc(o.id)}','SUSPENSA')">Suspender</button> <button onclick="alterar('${esc(o.id)}','APROVADA')">Reativar</button></td></tr>`).join("")}</tbody></table>`;
+}
+async function alterar(id,status){const {error}=await db.from("carteiras_motorista").update({status}).eq("id",id);if(error){setmsg("painelMsg","Erro: "+error.message,"error");return}setmsg("painelMsg","Status atualizado.","success");await carregarPainel()}
+document.getElementById("pass").addEventListener("keydown",e=>{if(e.key==="Enter")entrar()});
+</script>
+</body>
+</html>
