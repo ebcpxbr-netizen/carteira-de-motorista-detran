@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Carteira de Motorista — DETRAN</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+ --bg:#050b12;--card:#0b1722;--line:#21394c;
+ --text:#eef7ff;--muted:#8299aa;--blue:#168cff;
+}
+body{
+ min-height:100vh;padding:28px 16px;color:var(--text);
+ font-family:Inter,Arial,sans-serif;
+ background:
+ radial-gradient(circle at 8% 8%,#123e61 0,transparent 30%),
+ radial-gradient(circle at 92% 92%,#082d49 0,transparent 30%),var(--bg);
+}
+.container{max-width:1080px;margin:auto}
+.header{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.logo{
+ width:56px;height:56px;border-radius:17px;display:grid;place-items:center;
+ background:linear-gradient(135deg,#28aaff,#1769ff);
+ font-size:25px;font-weight:950;box-shadow:0 12px 35px #168cff55
+}
+.brand h1{font-size:23px;letter-spacing:.4px}
+.brand p{font-size:12px;color:var(--muted);margin-top:3px}
+.card{
+ border:1px solid var(--line);border-radius:25px;padding:28px;
+ background:#0b1722ee;box-shadow:0 25px 80px #0009;
+ backdrop-filter:blur(16px)
+}
+.hero{margin-bottom:18px}
+.hero h2{font-size:30px}
+.hero p{margin-top:7px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.full{grid-column:1/-1}
+label{display:block;margin-bottom:7px;color:#b8cbd8;font-size:12px;font-weight:850}
+input,select{
+ width:100%;padding:14px 15px;border:1px solid #294457;border-radius:13px;
+ background:#061019;color:#fff;outline:none;font-size:14px
+}
+input:focus,select:focus{border-color:#29aaff;box-shadow:0 0 0 4px #168cff18}
+.hint{display:block;color:#70889a;font-size:11px;margin-top:6px}
+.preview{
+ display:none;width:105px;height:135px;object-fit:cover;margin-top:9px;
+ border:1px solid #294457;border-radius:14px;background:#061019
+}
+.btn{
+ width:100%;padding:15px;border:0;border-radius:14px;cursor:pointer;
+ color:#fff;font-weight:950;background:linear-gradient(135deg,#159fff,#216cff);
+ box-shadow:0 12px 30px #167cff30
+}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.status{
+ display:none;margin-top:18px;padding:17px;border:1px solid var(--line);
+ border-radius:15px;background:#071019
+}
+.status.show{display:block}
+.status b{display:block;margin-bottom:5px}
+.pending{color:#ffd05b}.ok{color:#55e6a5}.bad{color:#ff7777}
+.cnh-card{
+ display:none;margin-top:22px;border:1px solid #31506a;border-radius:20px;
+ padding:22px;background:linear-gradient(145deg,#102131,#071019)
+}
+.cnh-card.show{display:block}
+.cnh-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.cnh-top h3{font-size:19px}
+.badge{padding:7px 11px;border-radius:999px;font-size:10px;font-weight:900}
+.badge.ativa{background:#104936;color:#60e3a8}
+.badge.suspensa{background:#58320e;color:#ffb461}
+.badge.cancelada,.badge.recusada{background:#541f27;color:#ff8a96}
+.badge.pendente{background:#5b4314;color:#ffd66a}
+.cnh-body{display:grid;grid-template-columns:120px 1fr;gap:18px}
+.cnh-photo{width:120px;height:150px;object-fit:cover;border-radius:13px;border:1px solid #294457}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.info div{padding:11px;border-radius:10px;background:#071019}
+.info small{display:block;color:#70889a;font-size:9px;margin-bottom:3px}
+@media(max-width:700px){
+ .grid,.info{grid-template-columns:1fr}
+ .full{grid-column:auto}.cnh-body{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header class="header">
+ <div class="logo">D</div>
+ <div class="brand">
+  <h1>DETRAN</h1>
+  <p>Carteira de Motorista</p>
+ </div>
+</header>
+
+<section class="card hero">
+ <h2>Carteira de Motorista</h2>
+ <p>Preencha seus dados e envie a solicitação para análise.</p>
+</section>
+
+<section class="card">
+ <form id="cnhForm">
+  <div class="grid">
+
+   <div class="full">
+    <label>NOME COMPLETO</label>
+    <input id="nome" maxlength="120" required placeholder="Digite seu nome completo">
+   </div>
+
+   <div>
+    <label>CPF</label>
+    <input id="cpf" maxlength="14" required placeholder="000.000.000-00">
+   </div>
+
+   <div>
+    <label>RG</label>
+    <input id="rg" maxlength="30" required placeholder="Digite seu RG">
+   </div>
+
+   <div>
+    <label>CLASSE / CATEGORIA</label>
+    <select id="categoria" required>
+     <option value="">Selecione uma categoria</option>
+     <option value="ACC">ACC</option>
+     <option value="A">A</option>
+     <option value="B">B</option>
+     <option value="C">C</option>
+     <option value="D">D</option>
+     <option value="E">E</option>
+     <option value="AB">AB</option>
+     <option value="AC">AC</option>
+     <option value="AD">AD</option>
+     <option value="AE">AE</option>
+    </select>
+   </div>
+
+   <div>
+    <label>URL DA FOTO</label>
+    <input id="foto_url" type="url" required placeholder="https://site.com/foto.png">
+    <span class="hint">Cole somente a URL da imagem.</span>
+    <img id="preview" class="preview" alt="Pré-visualização">
+   </div>
+
+   <div class="full">
+    <button class="btn" id="submitBtn" type="submit">ENVIAR PARA ANÁLISE</button>
+   </div>
+
+  </div>
+ </form>
+
+ <div id="status" class="status">
+  <b id="statusTitle"></b>
+  <span id="statusText"></span>
+ </div>
+
+ <div id="minhaCnh" class="cnh-card">
+  <div class="cnh-top">
+   <h3>Minha Carteira</h3>
+   <span id="badge" class="badge"></span>
+  </div>
+  <div class="cnh-body">
+   <img id="cnhPhoto" class="cnh-photo" alt="Foto">
+   <div class="info">
+    <div><small>NOME</small><span id="cnhNome"></span></div>
+    <div><small>CPF</small><span id="cnhCpf"></span></div>
+    <div><small>RG</small><span id="cnhRg"></span></div>
+    <div><small>CATEGORIA</small><span id="cnhCategoria"></span></div>
+    <div><small>NÚMERO DA CNH</small><span id="cnhNumero"></span></div>
+    <div><small>EMISSÃO</small><span id="cnhEmissao"></span></div>
+    <div><small>VALIDADE</small><span id="cnhValidade"></span></div>
+    <div><small>MOTIVO</small><span id="cnhMotivo"></span></div>
+   </div>
+  </div>
+ </div>
+</section>
+</div>
+
+<script>
+const SUPABASE_URL="COLE_AQUI_A_URL_DO_SEU_SUPABASE";
+const SUPABASE_ANON_KEY="COLE_AQUI_A_CHAVE_ANON_DO_SEU_SUPABASE";
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const $=id=>document.getElementById(id);
+
+function showStatus(title,text,cls){
+ $("status").className="status show";
+ $("statusTitle").className=cls;
+ $("statusTitle").textContent=title;
+ $("statusText").textContent=text;
+}
+
+function fmt(date){
+ if(!date)return "—";
+ return new Date(date+"T00:00:00").toLocaleDateString("pt-BR");
+}
+
+function showCnh(c){
+ $("minhaCnh").className="cnh-card show";
+ $("badge").className="badge "+c.status;
+ $("badge").textContent=c.status.toUpperCase();
+ $("cnhPhoto").src=c.foto_url;
+ $("cnhNome").textContent=c.nome_completo;
+ $("cnhCpf").textContent=c.cpf;
+ $("cnhRg").textContent=c.rg;
+ $("cnhCategoria").textContent=c.categoria;
+ $("cnhNumero").textContent=c.numero_cnh||"Ainda não emitida";
+ $("cnhEmissao").textContent=fmt(c.data_emissao);
+ $("cnhValidade").textContent=fmt(c.data_validade);
+ $("cnhMotivo").textContent=c.motivo||"—";
+}
+
+async function carregarMinhaCnh(){
+ const {data:{user}}=await db.auth.getUser();
+ if(!user)return;
+
+ const {data}=await db.from("cnh")
+  .select("*")
+  .eq("user_id",user.id)
+  .order("created_at",{ascending:false})
+  .limit(1)
+  .maybeSingle();
+
+ if(data)showCnh(data);
+}
+
+$("foto_url").addEventListener("input",()=>{
+ const url=$("foto_url").value.trim();
+ if(!url){$("preview").style.display="none";return}
+ $("preview").src=url;
+ $("preview").style.display="block";
+});
+$("preview").onerror=()=>{$("preview").style.display="none"};
+
+$("cnhForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ $("submitBtn").disabled=true;
+ $("submitBtn").textContent="ENVIANDO...";
+
+ try{
+  const {data:{user}}=await db.auth.getUser();
+  if(!user)throw new Error("Faça login antes de enviar a solicitação.");
+
+  const {data:existente}=await db.from("cnh")
+   .select("id,status")
+   .eq("user_id",user.id)
+   .in("status",["pendente","ativa","suspensa"])
+   .limit(1)
+   .maybeSingle();
+
+  if(existente)throw new Error("Você já possui uma solicitação ou CNH ativa.");
+
+  const {error}=await db.from("cnh").insert({
+   user_id:user.id,
+   nome_completo:$("nome").value.trim(),
+   cpf:$("cpf").value.trim(),
+   rg:$("rg").value.trim(),
+   categoria:$("categoria").value,
+   foto_url:$("foto_url").value.trim(),
+   status:"pendente"
+  });
+
+  if(error)throw error;
+
+  showStatus(
+   "SOLICITAÇÃO ENVIADA",
+   "Sua Carteira de Motorista está pendente de análise pelo DETRAN.",
+   "pending"
+  );
+
+  $("cnhForm").reset();
+  $("preview").style.display="none";
+  await carregarMinhaCnh();
+
+ }catch(err){
+  showStatus("ERRO",err.message||"Não foi possível enviar.","bad");
+ }
+
+ $("submitBtn").disabled=false;
+ $("submitBtn").textContent="ENVIAR PARA ANÁLISE";
+});
+
+(async()=>{
+ const {data:{user}}=await db.auth.getUser();
+ if(!user){
+  showStatus("LOGIN NECESSÁRIO","Faça login no sistema para solicitar sua CNH.","bad");
+ }else{
+  await carregarMinhaCnh();
+ }
+})();
+</script>
+</body>
+</html>
