@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DETRAN - Carteira de Motorista</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#050b12;--card:#0b1722;--line:#234156;--text:#edf7ff;--muted:#8298a9;--blue:#168cff;--green:#42dda0;--red:#ff6e7c;--yellow:#ffd25c}
@@ -33,22 +32,18 @@ input:focus,select:focus{border-color:#29aaff;box-shadow:0 0 0 4px #168cff18}
 .table{overflow:auto;border:1px solid var(--line);border-radius:15px}table{width:100%;border-collapse:collapse;min-width:820px}th,td{padding:12px;border-bottom:1px solid #1b2f3e;text-align:left;font-size:11px}th{font-size:9px;color:#71899b}.actions{display:flex;gap:5px;flex-wrap:wrap}.actions button{padding:7px 9px;border-radius:8px;background:#0b1b27;color:#fff;border:1px solid #29465b;font-size:9px;font-weight:900}.actions .g{color:#60e4a9;border-color:#1b7052}.actions .r{color:#ff8995;border-color:#71313d}
 .detail{display:grid;grid-template-columns:1fr 1fr;gap:9px}.detail div{padding:11px;background:#071019;border-radius:10px}.detail small{display:block;color:#71899b;font-size:9px;margin-bottom:4px}.detail img{width:120px;height:150px;object-fit:cover;border-radius:12px}.modal-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:16px}
 @media(max-width:720px){.grid,.info,.detail{grid-template-columns:1fr}.full{grid-column:auto}.stats{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.top .btn{font-size:11px;padding:11px 10px}.brand h1{font-size:19px}.brand small{font-size:11px}}
-.consulta{margin-top:18px}.consulta h3{font-size:19px;margin-bottom:6px}.consulta p{color:var(--muted);margin-bottom:15px}.consulta-result{margin-top:15px}.consulta-card{border:1px solid var(--line);border-radius:17px;background:#071019;padding:16px}.consulta-grid{display:grid;grid-template-columns:120px 1fr;gap:16px}.consulta-grid img{width:120px;height:150px;object-fit:cover;border-radius:12px;border:1px solid #29465b}.consulta-info{display:grid;grid-template-columns:1fr 1fr;gap:9px}.consulta-info div{background:#0b1722;padding:10px;border-radius:10px}.consulta-info small{display:block;color:#71899b;font-size:9px;margin-bottom:4px}
 </style>
 </head>
 <body>
-
 <div class="container" id="main">
 <header class="top">
  <div class="brand"><div class="logo">D</div><div><h1>DETRAN</h1><small>Carteira de Motorista</small></div></div>
  <button id="openPanel" class="btn dark" type="button">PAINEL DO DETRAN</button>
 </header>
-
 <section class="card hero">
  <h2>Carteira de Motorista</h2>
  <p>Preencha seus dados e envie a solicitação para análise.</p>
 </section>
-
 <section class="card">
 <form id="cnhForm">
 <div class="grid">
@@ -65,42 +60,16 @@ input:focus,select:focus{border-color:#29aaff;box-shadow:0 0 0 4px #168cff18}
 </section>
 </div>
 
-<section class="card consulta">
- <h3>CONSULTA DE CNH</h3>
- <p>Consulte uma carteira cadastrada pelo CPF ou número da CNH.</p>
- <form id="consultaForm">
-  <div class="grid">
-   <div class="full"><label>CPF OU NÚMERO DA CNH</label><input id="consultaBusca" required placeholder="Digite o CPF ou número da CNH"></div>
-   <div class="full"><button id="consultaBtn" class="btn" style="width:100%" type="submit">CONSULTAR CNH</button></div>
-  </div>
- </form>
- <div id="consultaMsg" class="msg" style="display:none"></div>
- <div id="consultaResult" class="consulta-result"></div>
-</section>
-
 <div id="loginOverlay" class="overlay">
 <div class="modal small">
  <h2>PAINEL DO DETRAN</h2><p>Digite as credenciais administrativas.</p>
  <form id="adminLogin">
-  <label>USUÁRIO</label><input id="adminUser" autocomplete="off" required style="margin-bottom:12px">
-  <label>SENHA</label><input id="adminPass" type="password" autocomplete="off" required style="margin-bottom:14px">
+  <label>USUÁRIO</label><input id="adminUser" autocomplete="off" required value="DETRAN-2026" style="margin-bottom:12px">
+  <label>SENHA</label><input id="adminPass" type="password" autocomplete="off" required value="DETRAN-2026" style="margin-bottom:14px">
   <button class="btn" style="width:100%" type="submit">ENTRAR NO PAINEL</button>
  </form>
  <div id="loginMsg" class="msg" style="display:none"></div>
  <button id="closeLogin" class="btn dark" style="width:100%;margin-top:9px" type="button">VOLTAR</button>
-</div>
-</div>
-
-<div id="counterOverlay" class="overlay">
-<div class="modal small">
- <h2>VERIFICAÇÃO ADMINISTRATIVA</h2><p>Digite a contra-senha para continuar.</p>
- <form id="counterLogin">
-  <label>USUÁRIO DE VERIFICAÇÃO</label><input id="counterUser" autocomplete="off" required style="margin-bottom:12px">
-  <label>CONTRA-SENHA</label><input id="counterPass" type="password" autocomplete="off" required style="margin-bottom:14px">
-  <button class="btn" style="width:100%" type="submit">LIBERAR PAINEL</button>
- </form>
- <div id="counterMsg" class="msg" style="display:none"></div>
- <button id="closeCounter" class="btn dark" style="width:100%;margin-top:9px" type="button">VOLTAR</button>
 </div>
 </div>
 
@@ -117,12 +86,7 @@ input:focus,select:focus{border-color:#29aaff;box-shadow:0 0 0 4px #168cff18}
   <div class="stat"><small>SUSPENSAS</small><strong id="suspended">0</strong></div>
  </div>
  <div class="filters">
-  <button class="active" data-filter="todos" type="button">TODAS</button>
-  <button data-filter="pendente" type="button">PENDENTES</button>
-  <button data-filter="ativa" type="button">ATIVAS</button>
-  <button data-filter="recusada" type="button">RECUSADAS</button>
-  <button data-filter="suspensa" type="button">SUSPENSAS</button>
-  <button data-filter="cancelada" type="button">CANCELADAS</button>
+  <button class="active" data-filter="todos" type="button">TODAS</button><button data-filter="pendente" type="button">PENDENTES</button><button data-filter="ativa" type="button">ATIVAS</button><button data-filter="recusada" type="button">RECUSADAS</button><button data-filter="suspensa" type="button">SUSPENSAS</button><button data-filter="cancelada" type="button">CANCELADAS</button>
  </div>
  <div id="panelMsg" class="msg" style="display:none"></div>
  <div class="table"><table><thead><tr><th>NOME</th><th>CPF</th><th>CATEGORIA</th><th>STATUS</th><th>NÚMERO</th><th>AÇÕES</th></tr></thead><tbody id="rows"></tbody></table></div>
@@ -139,11 +103,8 @@ input:focus,select:focus{border-color:#29aaff;box-shadow:0 0 0 4px #168cff18}
 <script>
 const SUPABASE_URL="https://fynojwuejxcelrezmfnc.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_G_FjWjHVkg73T55pCt-x2g_nkaomPVz";
-
 const ADMIN_USER="DETRAN-2026";
-const ADMIN_PASS="ADMCPX-2026";
-const COUNTER_USER="FNDCPXBR-2026";
-const COUNTER_PASS="2026";
+const ADMIN_PASS="DETRAN-2026";
 
 let db=null,rows=[],filter="todos",current=null;
 
@@ -162,8 +123,8 @@ function message(el,text,type=""){el.textContent=text;el.className="msg "+type;e
 function hide(el){el.style.display="none"}
 
 $("openPanel").addEventListener("click",function(){
- $("adminUser").value="";
- $("adminPass").value="";
+ $("adminUser").value=ADMIN_USER;
+ $("adminPass").value=ADMIN_PASS;
  hide($("loginMsg"));
  $("loginOverlay").classList.add("show");
  $("adminUser").focus();
@@ -173,37 +134,12 @@ $("closeLogin").addEventListener("click",()=>{$("loginOverlay").classList.remove
 
 $("adminLogin").addEventListener("submit",async function(e){
  e.preventDefault();
-
  const u=$("adminUser").value.trim();
  const p=$("adminPass").value;
-
  if(u!==ADMIN_USER||p!==ADMIN_PASS){
-  message($("loginMsg"),"Usuário ou senha inválidos.","err");
-  return;
+  message($("loginMsg"),"Usuário ou senha inválidos.","err");return;
  }
-
  $("loginOverlay").classList.remove("show");
- $("counterUser").value="";
- $("counterPass").value="";
- hide($("counterMsg"));
- $("counterOverlay").classList.add("show");
- $("counterUser").focus();
-});
-
-$("closeCounter").addEventListener("click",()=>{$("counterOverlay").classList.remove("show")});
-
-$("counterLogin").addEventListener("submit",async function(e){
- e.preventDefault();
-
- const u=$("counterUser").value.trim();
- const p=$("counterPass").value;
-
- if(u!==COUNTER_USER||p!==COUNTER_PASS){
-  message($("counterMsg"),"Usuário ou contra-senha inválidos.","err");
-  return;
- }
-
- $("counterOverlay").classList.remove("show");
  $("panel").classList.add("show");
  await loadPanel();
 });
@@ -212,203 +148,90 @@ $("closePanel").addEventListener("click",()=>{$("panel").classList.remove("show"
 
 $("foto").addEventListener("input",()=>{
  const u=$("foto").value.trim();
- if(!u){
-  $("photoPreview").style.display="none";
-  return;
- }
- $("photoPreview").src=u;
- $("photoPreview").style.display="block";
+ if(!u){$("photoPreview").style.display="none";return}
+ $("photoPreview").src=u;$("photoPreview").style.display="block";
 });
-
 $("photoPreview").onerror=()=>{$("photoPreview").style.display="none"};
 
 $("cnhForm").addEventListener("submit",async e=>{
- e.preventDefault();
- $("send").disabled=true;
- $("send").textContent="ENVIANDO...";
-
+ e.preventDefault();$("send").disabled=true;$("send").textContent="ENVIANDO...";
  try{
-  const payload={
-   nome_completo:$("nome").value.trim(),
-   cpf:$("cpf").value.trim(),
-   rg:$("rg").value.trim(),
-   categoria:$("categoria").value,
-   foto_url:$("foto").value.trim(),
-   status:"pendente"
-  };
-
+  const payload={nome_completo:$("nome").value.trim(),cpf:$("cpf").value.trim(),rg:$("rg").value.trim(),categoria:$("categoria").value,foto_url:$("foto").value.trim(),status:"pendente"};
   const {error}=await getDb().from("cnh").insert(payload);
   if(error)throw error;
-
   message($("mainMsg"),"Solicitação enviada para análise pelo DETRAN.","ok");
-  $("cnhForm").reset();
-  $("photoPreview").style.display="none";
-
- }catch(err){
-  message($("mainMsg"),"Erro ao enviar: "+(err.message||"verifique o Supabase."),"err");
- }
-
- $("send").disabled=false;
- $("send").textContent="ENVIAR PARA ANÁLISE";
-});
-
-$("consultaForm").addEventListener("submit",async e=>{
- e.preventDefault();
-
- const busca=$("consultaBusca").value.trim();
- if(!busca)return;
-
- $("consultaBtn").disabled=true;
- $("consultaBtn").textContent="CONSULTANDO...";
- hide($("consultaMsg"));
- $("consultaResult").innerHTML="";
-
- try{
-  const {data:cpfData,error:cpfError}=await getDb()
-   .from("cnh")
-   .select("*")
-   .eq("cpf",busca)
-   .limit(1);
-
-  if(cpfError)throw cpfError;
-
-  let c=(cpfData||[])[0];
-
-  if(!c){
-   const {data:numData,error:numError}=await getDb()
-    .from("cnh")
-    .select("*")
-    .eq("numero_cnh",busca)
-    .limit(1);
-
-   if(numError)throw numError;
-   c=(numData||[])[0];
-  }
-
-  if(!c){
-   message($("consultaMsg"),"Nenhuma CNH encontrada para essa consulta.","err");
-  }else{
-   $("consultaResult").innerHTML=`
-    <div class="consulta-card">
-     <div class="consulta-grid">
-      <div>
-       ${c.foto_url?`<img src="${esc(c.foto_url)}" onerror="this.style.display='none'">`:""}
-      </div>
-      <div class="consulta-info">
-       <div><small>NOME COMPLETO</small>${esc(c.nome_completo)}</div>
-       <div><small>CPF</small>${esc(c.cpf)}</div>
-       <div><small>RG</small>${esc(c.rg)}</div>
-       <div><small>CATEGORIA</small>${esc(c.categoria)}</div>
-       <div><small>STATUS</small><span class="badge ${esc(c.status)}">${esc(c.status||"—").toUpperCase()}</span></div>
-       <div><small>NÚMERO DA CNH</small>${esc(c.numero_cnh||"Não emitida")}</div>
-       <div><small>DATA DE EMISSÃO</small>${date(c.data_emissao)}</div>
-       <div><small>DATA DE VALIDADE</small>${date(c.data_validade)}</div>
-       <div><small>MOTIVO</small>${esc(c.motivo||"—")}</div>
-      </div>
-     </div>
-    </div>`;
-   message($("consultaMsg"),"CNH encontrada.","ok");
-  }
-
- }catch(err){
-  message($("consultaMsg"),"Erro na consulta: "+(err.message||"verifique o Supabase."),"err");
- }
-
- $("consultaBtn").disabled=false;
- $("consultaBtn").textContent="CONSULTAR CNH";
+  $("cnhForm").reset();$("photoPreview").style.display="none";
+ }catch(err){message($("mainMsg"),"Erro ao enviar: "+(err.message||"verifique o Supabase."),"err")}
+ $("send").disabled=false;$("send").textContent="ENVIAR PARA ANÁLISE";
 });
 
 async function loadPanel(){
  message($("panelMsg"),"Carregando solicitações...");
-
  try{
   const {data,error}=await getDb().from("cnh").select("*").order("created_at",{ascending:false});
   if(error)throw error;
-
-  rows=data||[];
-  hide($("panelMsg"));
-  stats();
-  render();
-
+  rows=data||[];hide($("panelMsg"));stats();render();
  }catch(err){
-  rows=[];
-  stats();
-  render();
+  rows=[];stats();render();
   message($("panelMsg"),"Painel aberto. Não foi possível carregar as CNHs do Supabase: "+(err.message||"erro desconhecido"),"err");
  }
 }
-
 function stats(){
  $("all").textContent=rows.length;
  $("pending").textContent=rows.filter(x=>x.status==="pendente").length;
  $("active").textContent=rows.filter(x=>x.status==="ativa").length;
  $("suspended").textContent=rows.filter(x=>x.status==="suspensa").length;
 }
-
 function render(){
  const list=filter==="todos"?rows:rows.filter(x=>x.status===filter);
-
  $("rows").innerHTML=list.map(c=>`<tr>
- <td>${esc(c.nome_completo)}</td>
- <td>${esc(c.cpf)}</td>
- <td>${esc(c.categoria)}</td>
- <td><span class="badge ${esc(c.status)}">${esc(c.status).toUpperCase()}</span></td>
- <td>${esc(c.numero_cnh||"—")}</td>
- <td><div class="actions">
-  <button onclick="openDetails('${esc(c.id)}')" type="button">VER</button>
-  ${c.status==="pendente"?`<button class="g" onclick="approve('${esc(c.id)}')" type="button">APROVAR</button><button class="r" onclick="refuse('${esc(c.id)}')" type="button">RECUSAR</button>`:""}
-  ${c.status==="ativa"?`<button class="r" onclick="suspend('${esc(c.id)}')" type="button">SUSPENDER</button><button onclick="cancelCnh('${esc(c.id)}')" type="button">CANCELAR</button>`:""}
-  ${c.status==="suspensa"?`<button class="g" onclick="reactivate('${esc(c.id)}')" type="button">REATIVAR</button><button onclick="cancelCnh('${esc(c.id)}')" type="button">CANCELAR</button>`:""}
- </div></td>
- </tr>`).join("")||`<tr><td colspan="6">Nenhuma solicitação.</td></tr>`;
+ <td>${esc(c.nome_completo)}</td><td>${esc(c.cpf)}</td><td>${esc(c.categoria)}</td>
+ <td><span class="badge ${esc(c.status)}">${esc(c.status).toUpperCase()}</span></td><td>${esc(c.numero_cnh||"—")}</td>
+ <td><div class="actions"><button onclick="openDetails('${esc(c.id)}')" type="button">VER</button>
+ ${c.status==="pendente"?`<button class="g" onclick="approve('${esc(c.id)}')" type="button">APROVAR</button><button class="r" onclick="refuse('${esc(c.id)}')" type="button">RECUSAR</button>`:""}
+ ${c.status==="ativa"?`<button class="r" onclick="suspend('${esc(c.id)}')" type="button">SUSPENDER</button><button onclick="cancelCnh('${esc(c.id)}')" type="button">CANCELAR</button>`:""}
+ ${c.status==="suspensa"?`<button class="g" onclick="reactivate('${esc(c.id)}')" type="button">REATIVAR</button><button onclick="cancelCnh('${esc(c.id)}')" type="button">CANCELAR</button>`:""}
+ </div></td></tr>`).join("")||`<tr><td colspan="6">Nenhuma solicitação.</td></tr>`;
 }
-
 document.querySelectorAll(".filters button").forEach(b=>b.addEventListener("click",()=>{
  document.querySelectorAll(".filters button").forEach(x=>x.classList.remove("active"));
- b.classList.add("active");
- filter=b.dataset.filter;
- render();
+ b.classList.add("active");filter=b.dataset.filter;render();
 }));
 
 function openDetails(id){
- current=rows.find(x=>x.id===id);
- if(!current)return;
-
+ current=rows.find(x=>x.id===id);if(!current)return;
  const c=current;
-
  $("details").innerHTML=`<div class="detail">
- <div><small>NOME</small>${esc(c.nome_completo)}</div>
- <div><small>CPF</small>${esc(c.cpf)}</div>
- <div><small>RG</small>${esc(c.rg)}</div>
- <div><small>CATEGORIA</small>${esc(c.categoria)}</div>
+ <div><small>NOME</small>${esc(c.nome_completo)}</div><div><small>CPF</small>${esc(c.cpf)}</div>
+ <div><small>RG</small>${esc(c.rg)}</div><div><small>CATEGORIA</small>${esc(c.categoria)}</div>
  <div><small>STATUS</small><span class="badge ${esc(c.status)}">${esc(c.status).toUpperCase()}</span></div>
  <div><small>NÚMERO</small>${esc(c.numero_cnh||"Não emitida")}</div>
- <div><small>EMISSÃO</small>${date(c.data_emissao)}</div>
- <div><small>VALIDADE</small>${date(c.data_validade)}</div>
- <div><small>MOTIVO</small>${esc(c.motivo||"—")}</div>
- <div><small>FOTO</small><img src="${esc(c.foto_url)}" onerror="this.style.display='none'"></div>
+ <div><small>EMISSÃO</small>${date(c.data_emissao)}</div><div><small>VALIDADE</small>${date(c.data_validade)}</div>
+ <div><small>MOTIVO</small>${esc(c.motivo||"—")}</div><div><small>FOTO</small><img src="${esc(c.foto_url)}" onerror="this.style.display='none'"></div>
  </div>`;
-
- $("detailActions").innerHTML=`
- ${c.status==="pendente"?`<button class="btn green" onclick="approve('${esc(c.id)}')">APROVAR</button><button class="btn red" onclick="refuse('${esc(c.id)}')">RECUSAR</button>`:""}
- ${c.status==="ativa"?`<button class="btn red" onclick="suspend('${esc(c.id)}')">SUSPENDER</button>`:""}
- ${c.status==="suspensa"?`<button class="btn green" onclick="reactivate('${esc(c.id)}')">REATIVAR</button>`:""}`;
-
+ $("detailActions").innerHTML=`${c.status==="pendente"?`<button class="btn green" onclick="approve('${esc(c.id)}')">APROVAR</button><button class="btn red" onclick="refuse('${esc(c.id)}')">RECUSAR</button>`:""}${c.status==="ativa"?`<button class="btn red" onclick="suspend('${esc(c.id)}')">SUSPENDER</button>`:""}${c.status==="suspensa"?`<button class="btn green" onclick="reactivate('${esc(c.id)}')">REATIVAR</button>`:""}`;
  $("detailOverlay").classList.add("show");
 }
-
-function closeDetails(){
- $("detailOverlay").classList.remove("show");
-}
+function closeDetails(){$("detailOverlay").classList.remove("show")}
 
 async function change(id,status,motivo=null){
  try{
-  const patch={
-   status,
-   motivo:motivo||null,
-   analisado_em:new Date().toISOString()
-  };
-
+  const patch={status,motivo:motivo||null,analisado_em:new Date().toISOString()};
   if(status==="ativa"){
    patch.numero_cnh="CNH-"+Math.floor(10000000000+Math.random()*89999999999);
-   patch.da
+   patch.data_emissao=new Date().toISOString().slice(0,10);
+   const d=new Date();d.setFullYear(d.getFullYear()+10);patch.data_validade=d.toISOString().slice(0,10);
+  }
+  const {error}=await getDb().from("cnh").update(patch).eq("id",id);
+  if(error)throw error;
+  await loadPanel();closeDetails();
+ }catch(err){alert("Erro no Supabase: "+(err.message||"verifique as políticas RLS."))}
+}
+async function approve(id){await change(id,"ativa")}
+async function refuse(id){const m=prompt("Motivo da recusa:");if(m)await change(id,"recusada",m)}
+async function suspend(id){const m=prompt("Motivo da suspensão:");if(m)await change(id,"suspensa",m)}
+async function cancelCnh(id){const m=prompt("Motivo do cancelamento:");if(m)await change(id,"cancelada",m)}
+async function reactivate(id){await change(id,"ativa")}
+</script>
+</body>
+</html>
