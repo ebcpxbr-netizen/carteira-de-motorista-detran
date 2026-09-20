@@ -82,12 +82,25 @@ input:focus,select:focus{border-color:#29aaff;box-shadow:0 0 0 4px #168cff18}
 <div class="modal small">
  <h2>PAINEL DO DETRAN</h2><p>Digite as credenciais administrativas.</p>
  <form id="adminLogin">
-  <label>USUÁRIO</label><input id="adminUser" autocomplete="off" required value="DETRAN-2026" style="margin-bottom:12px">
-  <label>SENHA</label><input id="adminPass" type="password" autocomplete="off" required value="DETRAN-2026" style="margin-bottom:14px">
+  <label>USUÁRIO</label><input id="adminUser" autocomplete="off" required style="margin-bottom:12px">
+  <label>SENHA</label><input id="adminPass" type="password" autocomplete="off" required style="margin-bottom:14px">
   <button class="btn" style="width:100%" type="submit">ENTRAR NO PAINEL</button>
  </form>
  <div id="loginMsg" class="msg" style="display:none"></div>
  <button id="closeLogin" class="btn dark" style="width:100%;margin-top:9px" type="button">VOLTAR</button>
+</div>
+</div>
+
+<div id="counterOverlay" class="overlay">
+<div class="modal small">
+ <h2>VERIFICAÇÃO ADMINISTRATIVA</h2><p>Digite a contra-senha para continuar.</p>
+ <form id="counterLogin">
+  <label>USUÁRIO DE VERIFICAÇÃO</label><input id="counterUser" autocomplete="off" required style="margin-bottom:12px">
+  <label>CONTRA-SENHA</label><input id="counterPass" type="password" autocomplete="off" required style="margin-bottom:14px">
+  <button class="btn" style="width:100%" type="submit">LIBERAR PAINEL</button>
+ </form>
+ <div id="counterMsg" class="msg" style="display:none"></div>
+ <button id="closeCounter" class="btn dark" style="width:100%;margin-top:9px" type="button">VOLTAR</button>
 </div>
 </div>
 
@@ -126,8 +139,11 @@ input:focus,select:focus{border-color:#29aaff;box-shadow:0 0 0 4px #168cff18}
 <script>
 const SUPABASE_URL="https://fynojwuejxcelrezmfnc.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_G_FjWjHVkg73T55pCt-x2g_nkaomPVz";
+
 const ADMIN_USER="DETRAN-2026";
-const ADMIN_PASS="DETRAN-2026";
+const ADMIN_PASS="ADMCPX-2026";
+const COUNTER_USER="FNDCPXBR-2026";
+const COUNTER_PASS="2026";
 
 let db=null,rows=[],filter="todos",current=null;
 
@@ -146,8 +162,8 @@ function message(el,text,type=""){el.textContent=text;el.className="msg "+type;e
 function hide(el){el.style.display="none"}
 
 $("openPanel").addEventListener("click",function(){
- $("adminUser").value=ADMIN_USER;
- $("adminPass").value=ADMIN_PASS;
+ $("adminUser").value="";
+ $("adminPass").value="";
  hide($("loginMsg"));
  $("loginOverlay").classList.add("show");
  $("adminUser").focus();
@@ -157,13 +173,37 @@ $("closeLogin").addEventListener("click",()=>{$("loginOverlay").classList.remove
 
 $("adminLogin").addEventListener("submit",async function(e){
  e.preventDefault();
+
  const u=$("adminUser").value.trim();
  const p=$("adminPass").value;
+
  if(u!==ADMIN_USER||p!==ADMIN_PASS){
   message($("loginMsg"),"Usuário ou senha inválidos.","err");
   return;
  }
+
  $("loginOverlay").classList.remove("show");
+ $("counterUser").value="";
+ $("counterPass").value="";
+ hide($("counterMsg"));
+ $("counterOverlay").classList.add("show");
+ $("counterUser").focus();
+});
+
+$("closeCounter").addEventListener("click",()=>{$("counterOverlay").classList.remove("show")});
+
+$("counterLogin").addEventListener("submit",async function(e){
+ e.preventDefault();
+
+ const u=$("counterUser").value.trim();
+ const p=$("counterPass").value;
+
+ if(u!==COUNTER_USER||p!==COUNTER_PASS){
+  message($("counterMsg"),"Usuário ou contra-senha inválidos.","err");
+  return;
+ }
+
+ $("counterOverlay").classList.remove("show");
  $("panel").classList.add("show");
  await loadPanel();
 });
@@ -212,7 +252,6 @@ $("cnhForm").addEventListener("submit",async e=>{
  $("send").textContent="ENVIAR PARA ANÁLISE";
 });
 
-/* CONSULTA DE CNH — já está no lugar correto */
 $("consultaForm").addEventListener("submit",async e=>{
  e.preventDefault();
 
@@ -372,47 +411,4 @@ async function change(id,status,motivo=null){
 
   if(status==="ativa"){
    patch.numero_cnh="CNH-"+Math.floor(10000000000+Math.random()*89999999999);
-   patch.data_emissao=new Date().toISOString().slice(0,10);
-
-   const d=new Date();
-   d.setFullYear(d.getFullYear()+10);
-   patch.data_validade=d.toISOString().slice(0,10);
-  }
-
-  const {error}=await getDb().from("cnh").update(patch).eq("id",id);
-  if(error)throw error;
-
-  await loadPanel();
-  closeDetails();
-
- }catch(err){
-  alert("Erro no Supabase: "+(err.message||"verifique as políticas RLS."));
- }
-}
-
-async function approve(id){
- await change(id,"ativa");
-}
-
-async function refuse(id){
- const m=prompt("Motivo da recusa:");
- if(m)await change(id,"recusada",m);
-}
-
-async function suspend(id){
- const m=prompt("Motivo da suspensão:");
- if(m)await change(id,"suspensa",m);
-}
-
-async function cancelCnh(id){
- const m=prompt("Motivo do cancelamento:");
- if(m)await change(id,"cancelada",m);
-}
-
-async function reactivate(id){
- await change(id,"ativa");
-}
-</script>
-
-</body>
-</html>
+   patch.da
